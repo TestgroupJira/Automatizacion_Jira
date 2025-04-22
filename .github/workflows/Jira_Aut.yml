@@ -1,8 +1,17 @@
 name: Run from Jira
 
 on:
-  workflow_dispatch:  # Permite ejecución manual desde GitHub o API
-
+  workflow_dispatch: # Permite ejecución manual desde GitHub o API
+    inputs:
+      test_to_run:
+        description: 'ID del issue de Jira'
+        required: true
+      jira_base_url:
+        description: 'Base URL de Jira'
+        required: true
+      jira_email:
+        description: 'Email del usuario en Jira'
+        required: true
 jobs:
   selenium-test:
     runs-on: ubuntu-latest
