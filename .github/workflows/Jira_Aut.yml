@@ -17,9 +17,9 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      TEST_TO_RUN: ""
-      JIRA_BASE_URL: ""
-      JIRA_EMAIL: ""
+      TEST_TO_RUN: ${{ github.event.inputs.test_to_run }}
+      JIRA_BASE_URL: ${{ github.event.inputs.jira_base_url }}
+      JIRA_EMAIL: ${{ github.event.inputs.jira_email }}
 
     steps:
       - name: Checkout code
@@ -51,7 +51,33 @@ jobs:
         run: |
           google-chrome --version
           chromedriver --version
+          
+      - name: Cambiar estado a EJECUTANDO
+        run: |
+          curl -X POST \
+            -H "Authorization: Basic ${{ secrets.JIRA_AUTH }}" \
+            -H "Content-Type: application/json" \
+            --data '{
+              "transition": { "id": "31" }
+            }' \
+            https://testgroupdemo.atlassian.net/rest/api/3/issue/${{ github.event.inputs.test_to_run }}/transitions
 
       - name: Run Selenium test
         run: |
           xvfb-run --auto-servernum --server-args='-screen 0 1024x768x24' mvn compile exec:java -Dexec.mainClass="demo.demo_google"
+
+
+      - name: Cambiar estado a EXITOSO o FALLIDO
+        if: always()
+        run: |
+          if [ "${{ job.status }}" == "success" ]; then
+            TRANSICION_ID="51"
+          else
+            TRANSICION_ID="41"
+          fi
+
+          curl -X POST \
+            -H "Authorization: Basic ${{ secrets.JIRA_AUTH }}" \
+            -H "Content-Type: application/json" \
+            --data "{\"transition\": { \"id\": \"$TRANSICION_ID\" }}" \
+            https://testgroupdemo.atlassian.net/rest/api/3/issue/${{ github.event.inputs.test_to_run }}/transitions
