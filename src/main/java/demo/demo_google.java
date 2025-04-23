@@ -20,9 +20,9 @@ public class demo_google {
 
         WebDriver driver = new ChromeDriver(options);
         driver.get("https://google.com");
-        titulo = driver.getTitle();
+        String titulo = driver.getTitle();
         System.out.println("Título de la página: " + titulo);
-        Assert.assertEquals("Google", titulo)
+        Assert.assertEquals("Google", titulo);
         Thread.sleep(2000);
         driver.quit();
     }
