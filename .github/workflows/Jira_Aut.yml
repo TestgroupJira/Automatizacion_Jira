@@ -25,6 +25,30 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
+      - name: Verificar valores de entrada
+        run: |
+          echo "TEST_TO_RUN: $TEST_TO_RUN"
+          echo "JIRA_BASE_URL: $JIRA_BASE_URL"
+
+  
+      - name: Cambiar estado a EJECUTANDO
+        run: |
+          echo "Verificando transicion disponible"
+          curl -s -X GET \
+            -H "Authorization: Basic ${{ secrets.JIRA_AUTH }}" \
+            -H "Content-Type: application/json" \
+            "https://testgroupdemo.atlassian.net/rest/api/3/issue/$TEST_TO_RUN/transitions"
+
+          echo "enviando transicion a EJECUTANDO"  
+          curl -X POST \
+            -H "Authorization: Basic ${{ secrets.JIRA_AUTH }}" \
+            -H "Content-Type: application/json" \
+            --data '{
+              "transition": { "id": "31" }
+            }' \
+            https://testgroupdemo.atlassian.net/rest/api/3/issue/$TEST_TO_RUN/transitions
+
+
       - name: Install dependencies
         run: |
           sudo apt-get update
@@ -51,29 +75,6 @@ jobs:
         run: |
           google-chrome --version
           chromedriver --version
-
-      - name: Verificar valores de entrada
-        run: |
-          echo "TEST_TO_RUN: $TEST_TO_RUN"
-          echo "JIRA_BASE_URL: $JIRA_BASE_URL"
-
-  
-      - name: Cambiar estado a EJECUTANDO
-        run: |
-          echo "Verificando transicion disponible"
-          curl -s -X GET \
-            -H "Authorization: Basic ${{ secrets.JIRA_AUTH }}" \
-            -H "Content-Type: application/json" \
-            "https://testgroupdemo.atlassian.net/rest/api/3/issue/$TEST_TO_RUN/transitions"
-
-          echo "enviando transicion a EJECUTANDO"  
-          curl -X POST \
-            -H "Authorization: Basic ${{ secrets.JIRA_AUTH }}" \
-            -H "Content-Type: application/json" \
-            --data '{
-              "transition": { "id": "31" }
-            }' \
-            https://testgroupdemo.atlassian.net/rest/api/3/issue/$TEST_TO_RUN/transitions
 
       - name: Run Selenium test
         run: |
