@@ -33,10 +33,10 @@ jobs:
       - name: Verificar valores de codigos de transiciones
         run: |
           echo "Verificando codigos transicion"
-          curl -u testgroup-jira@testgroup.cl: ${{ secrets.JIRA_AUTH }} \
+          curl -H "Authorization: Basic ${{ secrets.JIRA_AUTH }}" \
             -X GET \
             -H "Accept: application/json" \
-            "https://testgroupdemo.atlassian.net/rest/api/3/issue/DA-4/transitions"
+            "https://testgroupdemo.atlassian.net/rest/api/3/issue/$TEST_TO_RUN/transitions"
       
       - name: Cambiar estado a EJECUTANDO
         run: |
