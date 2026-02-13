@@ -30,7 +30,14 @@ jobs:
           echo "TEST_TO_RUN: $TEST_TO_RUN"
           echo "JIRA_BASE_URL: $JIRA_BASE_URL"
 
-  
+      - name: Verificar valores de codigos de transiciones
+        run: |
+          echo "Verificando codigos transicion"
+          curl -u testgroup-jira@testgroup.cl: ${{ secrets.JIRA_AUTH }} \
+            -X GET \
+            -H "Accept: application/json" \
+            "https://testgroupdemo.atlassian.net/rest/api/3/issue/DEMO_AUT/transitions"
+      
       - name: Cambiar estado a EJECUTANDO
         run: |
           echo "Verificando transicion disponible"
