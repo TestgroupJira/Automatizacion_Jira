@@ -53,7 +53,7 @@ jobs:
             --data '{
               "transition": { "id": "4" }
             }' \
-            https://testgroupdemo.atlassian.net/rest/api/3/issue/$TEST_TO_RUN/transitions
+            https://testgroupdemo.atlassian.net/rest/api/3/issue/DA-4/transitions
 
 
       - name: Install dependencies
